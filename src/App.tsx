@@ -152,6 +152,8 @@ class App extends React.Component {
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
     this.setState({formsTitle: "Edit Movie", openForms: true, movieRoles: movie.roles})
+
+    // taking clicked movies values and setting it as the initialValues for the forms dialog
     this.setState({formsMovie: {
       title: movie.title,
       year: movie.year,
@@ -159,8 +161,10 @@ class App extends React.Component {
       roles: '',
       genres: movie.genres,
       movieId: movie.movieId,
+      type: 'Movie',
+      key: '0',
+      textSearch: movie.title.toLowerCase(),
     }})
-    console.log(this.state.movieRoles)
   }
 
   deleteMultipleMovies = () => {
@@ -205,31 +209,31 @@ class App extends React.Component {
   }
 
   // on forms submit button clicked
-  submitMovie = (values: Movie, action:FormikActions<Movie>) => {
+  submitMovie = (newValues: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
     let subMovie: Movie;      
     let rolestoPush;
       
-    if(values.roles === null) {
+    if(newValues.roles === null) {
       rolestoPush = this.state.movieRoles; }
-    else { rolestoPush = values.roles }
+    else { rolestoPush = newValues.roles }
 
     subMovie = {
-      title: values.title,
-      year: values.year,
-      runtime: values.runtime,
-      textSearch: values.title.toLowerCase(),
+      title: newValues.title,
+      year: newValues.year,
+      runtime: newValues.runtime,
+      textSearch: newValues.title.toLowerCase(),
       roles: rolestoPush,
-      genres: values.genres,
-      movieId: values.movieId,
-      id: values.movieId,
+      genres: newValues.genres,
+      movieId: newValues.movieId,
+      id: newValues.movieId,
       type: 'Movie',
       key: '0',
     };
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
+      axios.put(cors + heliumApi + 'movies/' + newValues.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
       this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
@@ -258,6 +262,7 @@ class App extends React.Component {
   }
 
   render() { 
+    console.log(this.state.formsMovie);
     return (
       <React.Fragment>
       <ApplicationBar handleSearchChange={this.searchToggle}/>
