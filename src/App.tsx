@@ -209,42 +209,42 @@ class App extends React.Component {
   }
 
   // on forms submit button clicked
-  submitMovie = (newValues: Movie, action:FormikActions<Movie>) => {
+  submitMovie = (newInputs: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
-    let subMovie: Movie;      
+    let newMovie: Movie;      
     let rolestoPush;
       
-    if(newValues.roles === null) {
+    if(newInputs.roles === null) {
       rolestoPush = this.state.movieRoles; }
-    else { rolestoPush = newValues.roles }
+    else { rolestoPush = newInputs.roles }
 
-    subMovie = {
-      title: newValues.title,
-      year: newValues.year,
-      runtime: newValues.runtime,
-      textSearch: newValues.title.toLowerCase(),
+    newMovie = {
+      title: newInputs.title,
+      year: newInputs.year,
+      runtime: newInputs.runtime,
+      textSearch: newInputs.title.toLowerCase(),
       roles: rolestoPush,
-      genres: newValues.genres,
-      movieId: newValues.movieId,
-      id: newValues.movieId,
+      genres: newInputs.genres,
+      movieId: newInputs.movieId,
+      id: newInputs.movieId,
       type: 'Movie',
       key: '0',
     };
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      axios.put(cors + heliumApi + 'movies/' + newValues.id, subMovie)
-      .then(action => {this.handleEdit(subMovie)})
+      axios.put(cors + heliumApi + 'movies/' + newInputs.id, newMovie)
+      .then(action => {this.handleEdit(newMovie)})
       .catch(error => {console.log(error.response)})
       this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
     }
 
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
-      axios.post(cors + heliumApi + 'movies', subMovie)
-      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + subMovie.title}))
+      axios.post(cors + heliumApi + 'movies', newMovie)
+      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + newMovie.title}))
       .catch(error => {console.log(error.response)})
-      movies.push(subMovie);
+      movies.push(newMovie);
       this.setState({movies})
     }
   }
